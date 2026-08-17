@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="集客・発信・事務・情報整理・お客様対応から今の仕事に近い困りごとを探せます。"
+    />
+    <meta property="og:title" content="困りごとを探す｜つなぐスタジオ" />
+    <meta
+      property="og:description"
+      content="15の困りごとから短いストーリーまたは一緒に整理できる支援内容へ進めます。"
+    />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#faf7f0" />
+    <title>困りごとを探す｜つなぐスタジオ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500&amp;family=Zen+Kaku+Gothic+New:wght@500;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+    <script src="../assets/js/site.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">本文へ移動する</a>
+
+    <header class="site-header" data-site-header>
+      <div class="site-header__inner">
+        <a class="site-brand" href="../" aria-label="つなぐスタジオのトップページ">
+          <span class="site-brand__name">つなぐスタジオ</span>
+          <span class="site-brand__role">やさしい業務設計パートナー</span>
+        </a>
+
+        <button
+          class="menu-button"
+          type="button"
+          aria-expanded="false"
+          aria-controls="global-navigation"
+          data-menu-button
+        >
+          <span class="menu-button__icon" aria-hidden="true"><span></span><span></span><span></span></span>
+          <span data-menu-label>メニュー</span>
+        </button>
+
+        <nav class="site-nav" id="global-navigation" aria-label="サイト内ナビゲーション" data-site-nav>
+          <a href="./" aria-current="page">困りごとを探す</a>
+          <a href="../work/">実践と制作</a>
+          <a class="site-nav__cta" href="../contact/">相談する</a>
+          <a class="site-nav__quiet" href="../privacy/">プライバシー</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <section class="page-intro" aria-labelledby="page-heading">
+        <div class="container container--content">
+          <nav class="breadcrumb" aria-label="パンくずリスト">
+            <ol>
+              <li><a href="../">トップ</a></li>
+              <li aria-current="page">困りごとを探す</li>
+            </ol>
+          </nav>
+          <p class="eyebrow"><span aria-hidden="true"></span>今の仕事から探す</p>
+          <h1 id="page-heading">どんなことで<br />困っていますか？</h1>
+          <p class="page-intro__lead">
+            ぴったり同じでなくても大丈夫です。<br />近いと感じる言葉から
+            短いストーリーや一緒に整理できることへ進めます。<br />
+          </p>
+        </div>
+      </section>
+
+      <section class="concerns-section" aria-labelledby="concern-results-heading">
+        <div class="container concerns-layout" data-concerns-app>
+          <aside class="concern-filters" aria-labelledby="filter-heading">
+            <h2 id="filter-heading">表示する困りごとを選ぶ</h2>
+
+            <fieldset class="filter-group">
+              <legend>カテゴリー</legend>
+              <div class="filter-buttons filter-buttons--stacked" data-category-filters>
+                <button type="button" data-category="marketing" aria-pressed="true">
+                  <span aria-hidden="true">01</span>集客・発信
+                </button>
+                <button type="button" data-category="operations" aria-pressed="false">
+                  <span aria-hidden="true">02</span>事務・情報整理
+                </button>
+                <button type="button" data-category="customer" aria-pressed="false">
+                  <span aria-hidden="true">03</span>お客様対応
+                </button>
+              </div>
+            </fieldset>
+
+            <fieldset class="filter-group">
+              <legend>見たい内容</legend>
+              <div class="filter-buttons" data-type-filters>
+                <button type="button" data-type="all" aria-pressed="true">すべて</button>
+                <button type="button" data-type="story" aria-pressed="false">マンガ</button>
+                <button type="button" data-type="support" aria-pressed="false">できること</button>
+              </div>
+            </fieldset>
+
+            <p class="filter-note">
+              カテゴリーを選んでもページ先頭へ戻らずこの場所で5件が切り替わります。<br />
+            </p>
+          </aside>
+
+          <div class="concern-results">
+            <div class="concern-results__heading">
+              <div>
+                <p class="concern-results__category" data-results-category>集客・発信</p>
+                <h2 id="concern-results-heading">近い困りごとを選んでください</h2>
+              </div>
+              <p class="concern-results__count" data-results-status aria-live="polite">5件を表示しています</p>
+            </div>
+
+            <div class="concern-grid" data-concern-list></div>
+            <noscript>
+              <p class="notice-box">困りごとの絞り込みを表示するにはブラウザのJavaScriptを有効にしてください。<br /></p>
+            </noscript>
+          </div>
+        </div>
+      </section>
+
+      <section class="section concern-help" aria-labelledby="concern-help-heading">
+        <div class="container container--content">
+          <p class="eyebrow"><span aria-hidden="true"></span>迷ったときは</p>
+          <h2 id="concern-help-heading">ひとつに決めきれなくても大丈夫です。</h2>
+          <p>
+            複数の困りごとが重なっている場合もあります。<br />今いちばん負担に感じる場面から自由に選んでください。<br />
+          </p>
+          <a class="button button--primary" href="../contact/">整理できていない困りごとを相談する</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container site-footer__inner">
+        <div class="site-footer__brand">
+          <p class="site-footer__name">つなぐスタジオ</p>
+          <p>想いを形にして 必要とする人へつなぐ。<br /></p>
+          <svg class="site-footer__knot" viewBox="0 0 180 44" aria-hidden="true">
+            <path d="M2 22h48c12 0 12-14 25-14 17 0 17 28 0 28-13 0-13-28 4-28 13 0 13 14 25 14h74" />
+          </svg>
+        </div>
+        <nav class="site-footer__nav" aria-label="フッターナビゲーション">
+          <a href="./">困りごとを探す</a>
+          <a href="../work/">実践と制作</a>
+          <a href="../about/">プロフィール</a>
+          <a href="../contact/">お問い合わせ</a>
+          <a href="../privacy/">プライバシー</a>
+          <a href="https://x.com/Yurin275" target="_blank" rel="noopener noreferrer">X<span class="sr-only">（新しいタブで開きます）</span></a>
+        </nav>
+      </div>
+      <p class="site-footer__copyright"><small>© 2026 つなぐスタジオ</small></p>
+    </footer>
+  </body>
+</html>

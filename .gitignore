@@ -1,0 +1,19 @@
+.DS_Store
+
+# ローカル設定・機密情報
+.env
+.env.*
+*.env
+.envrc
+credentials.json
+auth.json
+service-account*.json
+*.pem
+*.key
+*.p12
+*.pfx
+
+# 生成物・ログ
+node_modules/
+dist/
+*.log
