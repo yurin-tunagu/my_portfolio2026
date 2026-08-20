@@ -9,6 +9,33 @@
   // 同じ画面から続けて送信できるようになるまでの待ち時間（ミリ秒）
   const CONTACT_COOLDOWN_MS = 60000;
 
+  // GA4イベント送信。氏名・メール・相談本文などの個人情報は絶対に含めない。
+  const gaEvent = (name, params = {}) => {
+    if (typeof window.gtag === "function") window.gtag("event", name, params);
+  };
+
+  const currentQuery = new URLSearchParams(window.location.search);
+  const currentCategory = currentQuery.get("category") || "";
+  const currentConcern = currentQuery.get("concern") || "";
+
+  // ストーリー・支援内容ページの閲覧を記録する
+  const pathMatch = window.location.pathname.match(/\/(stories|support)\/([^/]+)\/?$/);
+  if (pathMatch) {
+    const [, kind, slug] = pathMatch;
+    gaEvent(kind === "stories" ? "view_story" : "view_support", {
+      [kind === "stories" ? "story_id" : "support_id"]: slug,
+      category: currentCategory,
+      concern_id: currentConcern,
+    });
+  }
+
+  // Xプロフィールへのクリックを記録する（表示場所＝ページパス）
+  document.querySelectorAll('a[href*="x.com/Yurin275"]').forEach((link) => {
+    link.addEventListener("click", () => {
+      gaEvent("click_x_profile", { placement: window.location.pathname });
+    });
+  });
+
   const menuButton = document.querySelector("[data-menu-button]");
   const siteNav = document.querySelector("[data-site-nav]");
   const menuLabel = document.querySelector("[data-menu-label]");
@@ -322,6 +349,9 @@
     link.className = `button ${concern.destinationType === "story" ? "button--primary" : "button--secondary"}`;
     link.textContent = concern.destinationType === "story" ? "マンガで見る📖" : "できることを見る";
     link.setAttribute("aria-label", `${link.textContent}：${concern.title}`);
+    link.addEventListener("click", () => {
+      gaEvent("select_concern", { category: concern.categoryId, concern_id: concern.id });
+    });
     article.append(link);
 
     return article;
@@ -428,6 +458,7 @@
 
   const contactForm = document.querySelector("[data-contact-form]");
   if (contactForm) {
+    gaEvent("begin_contact", { category: currentCategory, concern_id: currentConcern });
     const categoryField = contactForm.elements.category;
     const concernField = contactForm.elements.concern;
     const concernOptions = [...concernField.querySelectorAll("option[data-category]")];
@@ -571,6 +602,8 @@
           throw new Error("送信先からの応答を読み取れませんでした。");
         }
         if (!result?.ok) throw new Error(result?.error || "送信先で受け付けられませんでした。");
+
+        gaEvent("generate_lead", { category: currentCategory, concern_id: currentConcern });
 
         try {
           sessionStorage.setItem("contactLastSentAt", String(Date.now()));
