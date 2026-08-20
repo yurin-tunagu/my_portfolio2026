@@ -6,6 +6,7 @@
   --color-teal-050: #eef5f4;
   --color-mint-100: #ddedea;
   --color-orange-500: #e88a4c;
+  --color-orange-700: #b85f2f;
   --color-orange-050: #fdf0e7;
   --color-ink-900: #263332;
   --color-border: rgba(38, 51, 50, 0.18);
@@ -107,6 +108,8 @@ h3 {
   color: var(--color-teal-700);
   font-family: var(--font-heading);
   letter-spacing: 0.01em;
+  /* 折り返しを日本語の文節単位にそろえる。非対応ブラウザでは無視される */
+  word-break: auto-phrase;
 }
 
 h1 {
@@ -213,6 +216,8 @@ h3 {
   line-height: 1.5;
   text-align: center;
   text-decoration: none;
+  /* 狭い画面でボタン名が助詞の途中で切れないようにする */
+  word-break: auto-phrase;
   transition: background-color 150ms ease, color 150ms ease, transform 150ms ease;
 }
 
@@ -425,11 +430,20 @@ h3 {
 
 .hero__heading {
   grid-area: heading;
+  container-type: inline-size;
 }
 
 .hero__heading h1 {
   max-width: 11em;
   margin-bottom: 0;
+  /* 「必要とする人へつなぐ」の10文字が、どの画面幅でも1行に収まる大きさに抑える */
+  font-size: min(var(--text-h1), 9.7cqi);
+}
+
+.hero__subtext {
+  margin-top: 0.75rem;
+  color: var(--color-ink-900);
+  font-size: var(--text-body-lg);
 }
 
 .hero__visual {
@@ -460,33 +474,18 @@ h3 {
   display: block;
 }
 
-.hero__line {
-  position: absolute;
-  z-index: 2;
-  right: -2rem;
-  bottom: -1rem;
-  width: 68%;
-  overflow: visible;
-}
-
-.hero__line path {
-  fill: none;
-  stroke: var(--color-orange-500);
-  stroke-linecap: round;
-  stroke-width: 2;
-}
-
 .hero__copy {
   grid-area: copy;
   max-width: 40rem;
 }
 
 .hero__identity {
-  margin-bottom: 0.45rem;
-  color: var(--color-teal-700);
+  margin-bottom: 0.75rem;
+  color: var(--color-orange-700);
   font-family: var(--font-heading);
-  font-size: var(--text-body-lg);
+  font-size: var(--text-h1);
   font-weight: 700;
+  line-height: 1.25;
 }
 
 .hero__role {
@@ -545,17 +544,9 @@ h3 {
   flex-direction: column;
   padding: 1.5rem;
   border: 1px solid var(--color-border);
-  border-top: 3px solid var(--color-teal-700);
+  border-top: 3px solid var(--color-orange-500);
   border-radius: var(--radius-card);
   background: var(--color-surface);
-}
-
-.category-card--marketing {
-  border-top-color: var(--color-orange-500);
-}
-
-.category-card--customer {
-  background: var(--color-teal-050);
 }
 
 .category-card__icon {
@@ -566,10 +557,6 @@ h3 {
   margin-bottom: 1.5rem;
   border-radius: 50%;
   color: var(--color-teal-700);
-  background: var(--color-mint-100);
-}
-
-.category-card--marketing .category-card__icon {
   background: var(--color-orange-050);
 }
 
@@ -599,6 +586,48 @@ h3 {
 
 .category-card .text-link {
   margin-top: auto;
+}
+
+.category-card__voices {
+  margin: 0 0 1.5rem;
+  padding-left: 0;
+  list-style: none;
+  line-height: 1.9;
+}
+
+.category-card__voices li {
+  position: relative;
+  /* 「 が持つ左の余白ぶん、チェックとの間隔を詰めている */
+  padding-left: 1.55rem;
+}
+
+.category-card__voices li + li {
+  margin-top: 0.5rem;
+}
+
+/* 手書き風の細いチェック。文意は本文が担うため装飾として扱う */
+.category-card__voices li::before {
+  position: absolute;
+  top: 0.42em;
+  left: 0;
+  width: 1.15rem;
+  height: 1.15rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23245C5A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 13.2c2.1.7 3.7 2 4.8 3.8 2-4.7 5.1-8.2 9.2-10.4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  content: "";
+}
+
+.category-card__link {
+  flex-direction: column;
+  gap: 0.15rem;
+  align-items: flex-start;
+}
+
+.category-card__link-note {
+  font-size: 0.875em;
+  font-weight: 500;
 }
 
 .section-action {
@@ -697,10 +726,6 @@ h3 {
   font-family: var(--font-heading);
   font-size: var(--text-note);
   font-weight: 700;
-}
-
-.profile-intro__link {
-  justify-self: start;
 }
 
 .faq-list {
@@ -878,6 +903,23 @@ h3 {
   margin-right: 0.5rem;
   color: var(--color-orange-500);
   content: "/";
+}
+
+.breadcrumb a {
+  position: relative;
+}
+
+/* 文字は小さいままで、押せる範囲だけ44px確保する（見た目の配置は変えない） */
+.breadcrumb a::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  min-width: 2.75rem;
+  height: 100%;
+  min-height: 2.75rem;
+  transform: translate(-50%, -50%);
+  content: "";
 }
 
 .concerns-section {
@@ -1118,25 +1160,6 @@ h3 {
     padding-top: 5rem;
   }
 
-  .hero__inner {
-    grid-template-areas: "heading visual" "copy visual";
-    grid-template-columns: minmax(0, 7fr) minmax(18rem, 5fr);
-    column-gap: clamp(3rem, 8vw, 7rem);
-    align-items: center;
-  }
-
-  .hero__heading {
-    align-self: end;
-  }
-
-  .hero__visual {
-    width: 100%;
-  }
-
-  .hero__copy {
-    align-self: start;
-  }
-
   .hero__lead {
     max-width: 35rem;
   }
@@ -1184,14 +1207,30 @@ h3 {
     margin-top: 0.5rem;
   }
 
+  .process--five .process-list {
+    grid-template-columns: 1fr;
+    gap: 0;
+    margin-top: 0;
+  }
+
+  .process--five .process-list li {
+    grid-template-columns: 2.75rem 1fr;
+    padding: 0 0 2rem;
+  }
+
+  .process--five .process-list li:not(:last-child)::after {
+    top: 2.35rem;
+    right: auto;
+    bottom: 0.2rem;
+    left: 1.35rem;
+    width: 2px;
+    height: auto;
+  }
+
   .profile-intro__inner {
     grid-template-columns: minmax(15rem, 4fr) minmax(0, 8fr);
     gap: clamp(2.5rem, 8vw, 7rem);
     align-items: start;
-  }
-
-  .profile-intro__link {
-    grid-column: 2;
   }
 
   .contact-intro__actions {
@@ -1222,6 +1261,46 @@ h3 {
 }
 
 @media (min-width: 56rem) {
+  /* 768pxでは列が窮屈になり見出しとCTAが折り返すため、ヒーローの2列化は56remから */
+  .hero__inner {
+    grid-template-areas: "heading visual" "copy visual";
+    grid-template-columns: minmax(0, 7fr) minmax(18rem, 5fr);
+    column-gap: clamp(3rem, 8vw, 7rem);
+    align-items: center;
+  }
+
+  .hero__heading {
+    align-self: end;
+  }
+
+  .hero__visual {
+    width: 100%;
+  }
+
+  .hero__copy {
+    align-self: start;
+  }
+
+  .process--five .process-list {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 1.25rem;
+    margin-top: 3rem;
+  }
+
+  .process--five .process-list li {
+    grid-template-columns: 1fr;
+    padding: 0;
+  }
+
+  .process--five .process-list li:not(:last-child)::after {
+    top: 1.35rem;
+    right: -1.25rem;
+    bottom: auto;
+    left: 2.75rem;
+    width: calc(100% - 1.5rem);
+    height: 2px;
+  }
+
   .site-header__inner {
     min-height: 6rem;
   }
@@ -1353,8 +1432,133 @@ h3 {
   border: 2px solid var(--color-teal-700);
 }
 
+.info-card__context {
+  margin-bottom: 0.9rem;
+  color: #a8541f;
+  font-weight: 700;
+}
+
+#future-heading {
+  color: var(--color-orange-700);
+}
+
+.back-to-top {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.75rem;
+  height: 3.75rem;
+  border-radius: 50%;
+  background: var(--color-teal-700);
+  color: var(--color-surface);
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  box-shadow: var(--shadow-float);
+  opacity: 0;
+  transform: translateY(0.5rem);
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease, box-shadow 0.2s ease;
+}
+
+.back-to-top.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.back-to-top:hover {
+  box-shadow: 0 16px 32px rgba(38, 51, 50, 0.18);
+  transform: translateY(-2px);
+}
+
+.back-to-top:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+@media (max-width: 30rem) {
+  .back-to-top {
+    right: 1rem;
+    bottom: 1rem;
+    width: 3.25rem;
+    height: 3.25rem;
+    font-size: 0.7rem;
+  }
+}
+
+.section[aria-labelledby="future-heading"] .check-list li::before {
+  content: "🔶";
+}
+
+.roles-emphasis {
+  margin-top: 1.5rem;
+  margin-bottom: calc(var(--section-space) * -0.6);
+  color: var(--color-orange-700);
+  font-family: var(--font-heading);
+  font-size: var(--text-h3);
+  font-weight: 500;
+  line-height: 1.45;
+}
+
 .info-card__label,
 .record-card__label,
+/* ページ判型の漫画（1枚に複数コマが焼き込まれた画像を並べる） */
+/* 縦に読み進める流れを切らないよう、ページ間に余白もラベルも置かない */
+.comic-pages {
+  display: grid;
+  gap: 0;
+}
+
+/*
+  本文列は読みやすさのため40remに抑えているが、コマ内に文字が焼き込まれた
+  漫画画像は同じ幅だと文字が小さくなりすぎる。漫画だけ本文列より広げる。
+*/
+@media (min-width: 48rem) {
+  .comic-pages {
+    width: min(58rem, calc(100vw - (var(--gutter) * 2)));
+    margin-left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+.comic-pages__hint {
+  margin: 0 0 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-button);
+  background: var(--color-mint-100);
+  font-size: var(--text-note);
+}
+
+.comic-page {
+  margin: 0;
+}
+
+/* 画像自体に紙の縁が描かれているため、CSSの枠線・角丸は付けない */
+.comic-page img {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--color-surface);
+}
+
+.comic-page__zoom {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.comic-page__zoom:focus-visible {
+  outline: 3px solid var(--color-orange-500);
+  outline-offset: -3px;
+}
+
 .comic-scene__label {
   display: block;
   margin-bottom: 0.6rem;
@@ -1563,6 +1767,117 @@ h3 {
 }
 
 /* Work and profile */
+.work-hero .button {
+  margin-top: 0.5rem;
+}
+
+#work-list {
+  scroll-margin-top: 5rem;
+}
+
+.work-showcase + .work-showcase {
+  border-top: 1px solid var(--color-border);
+}
+
+.work-showcase--warm {
+  background: var(--color-orange-050);
+}
+
+.work-showcase__grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.work-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  padding: 1.5rem;
+  border: 1px solid var(--color-border);
+  border-top: 3px solid var(--color-orange-500);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+
+.work-card--featured {
+  border: 2px solid var(--color-teal-700);
+  border-top-width: 3px;
+}
+
+.work-card__label {
+  display: block;
+  margin-bottom: 0.6rem;
+  color: var(--color-orange-700);
+  font-family: var(--font-heading);
+  font-size: var(--text-note);
+  font-weight: 700;
+}
+
+.work-card h3 {
+  margin-bottom: 0.75rem;
+  font-size: 1.3rem;
+}
+
+.work-card p {
+  margin-bottom: 0;
+}
+
+.work-card .button {
+  align-self: flex-start;
+  margin-top: 1.25rem;
+}
+
+.work-card__note {
+  margin-top: 0.75rem;
+  color: var(--color-ink-900);
+  font-size: var(--text-note);
+}
+
+.work-card__benefit {
+  margin-top: 1rem;
+  padding: 0.8rem 0.9rem;
+  border-radius: var(--radius-button);
+  background: var(--color-orange-050);
+  color: var(--color-ink-900);
+  font-size: var(--text-note);
+  font-weight: 700;
+}
+
+.work-card__steps {
+  margin: 1rem 0 0;
+  padding-left: 1.6rem;
+}
+
+.work-card__steps li + li {
+  margin-top: 0.85rem;
+}
+
+.work-card__platforms {
+  margin: 0 0 1rem;
+  padding-left: 1.25rem;
+}
+
+.work-card__platforms li {
+  padding-left: 0.15rem;
+}
+
+.work-outro {
+  text-align: center;
+}
+
+.work-outro p {
+  margin: 0;
+  color: var(--color-ink-900);
+}
+
+.work-outro .section-action {
+  margin-top: 1.25rem;
+}
+
+.work-card__platforms li + li {
+  margin-top: 0.65rem;
+}
+
 .record-section + .record-section {
   border-top: 1px solid var(--color-border);
 }
@@ -1585,6 +1900,12 @@ h3 {
   border: 1px solid var(--color-orange-500);
   border-radius: var(--radius-card);
   background: var(--color-orange-050);
+}
+
+/* プロフィールページの主役は本人なので、名前をトップのヒーローと同じ扱いで見せる */
+.profile-page__name {
+  margin-bottom: 0.75rem;
+  color: var(--color-orange-700);
 }
 
 .profile-page__grid {
@@ -1721,6 +2042,44 @@ h3 {
   cursor: not-allowed;
 }
 
+/* 迷惑送信よけの入力欄。画面外へ出し、読み上げソフトとタブ移動からも外す。
+   display:none にしないのは、単純な自動投稿プログラムに気づかれないため。 */
+.honeypot-field {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.form-status {
+  margin: 1rem 0 0;
+  color: var(--color-error-700);
+  font-size: var(--text-note);
+  font-weight: 500;
+}
+
+/* 文言が入っていないときに余白だけ残らないようにする。
+   読み上げの更新を拾えるよう、要素そのものは消さない。 */
+.form-status:empty {
+  margin: 0;
+}
+
+.form-complete {
+  padding: 1.25rem;
+  border: 2px solid var(--color-teal-700);
+  border-radius: var(--radius-card);
+  background: var(--color-mint-100);
+}
+
+.form-complete h2 {
+  margin-top: 0;
+}
+
+.form-complete > :last-child {
+  margin-bottom: 0;
+}
+
 .policy-content section + section {
   margin-top: 2.5rem;
 }
@@ -1745,6 +2104,16 @@ h3 {
   .record-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1.25rem;
+  }
+
+  .work-showcase__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  .work-showcase__grid--two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
   }
 
   .comic-scene__panels {

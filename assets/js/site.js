@@ -1,6 +1,14 @@
 (() => {
   "use strict";
 
+  // お問い合わせフォームの送信先。
+  // Google Apps Script のウェブアプリURL（/exec で終わるもの）をここに貼る。
+  // 空のままなら送信ボタンは押せないままで、外部へは何も送られない。
+  const CONTACT_ENDPOINT = "https://script.google.com/macros/s/AKfycbyutgvebXG9PZQwJrhAoTrAwyy8KkDTTBPIc-Vc26KiX8B6uR_zlbjRTCgOvmVCl5_XvA/exec";
+
+  // 同じ画面から続けて送信できるようになるまでの待ち時間（ミリ秒）
+  const CONTACT_COOLDOWN_MS = 60000;
+
   const menuButton = document.querySelector("[data-menu-button]");
   const siteNav = document.querySelector("[data-site-nav]");
   const menuLabel = document.querySelector("[data-menu-label]");
@@ -37,6 +45,26 @@
 
     desktopNavigation.addEventListener("change", () => setMenuState(false));
   }
+
+  // TOPへ戻るボタン：一定スクロール量を超えたら表示する
+  const backToTop = document.createElement("a");
+  backToTop.href = "#";
+  backToTop.className = "back-to-top";
+  backToTop.setAttribute("aria-label", "ページの先頭へ戻る");
+  backToTop.innerHTML = "<span>TOPへ</span>";
+  document.body.appendChild(backToTop);
+
+  const BACK_TO_TOP_THRESHOLD = 600;
+  const toggleBackToTop = () => {
+    backToTop.classList.toggle("is-visible", window.scrollY > BACK_TO_TOP_THRESHOLD);
+  };
+  toggleBackToTop();
+  window.addEventListener("scroll", toggleBackToTop, { passive: true });
+
+  backToTop.addEventListener("click", (event) => {
+    event.preventDefault();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
 
   const concernApp = document.querySelector("[data-concerns-app]");
   if (concernApp) initConcerns(concernApp);
@@ -110,7 +138,7 @@
       id: "2-1",
       slug: "monthly-invoices",
       categoryId: "operations",
-      title: "領収書と請求書の整理が毎月ぎりぎりになる",
+      title: "請求書の整理が毎月ぎりぎりになる",
       empathy: "メールに埋もれた書類を月末に探し直し本来の仕事へ戻る気力が削られるときに。",
       destinationType: "story",
       destinationId: "invoice",
@@ -262,7 +290,7 @@
     const label = document.createElement("span");
     label.className = "concern-card__label";
     label.append(createIcon(concern.destinationType));
-    label.append(concern.destinationType === "story" ? "短いストーリー" : "一緒に整理すること");
+    label.append(concern.destinationType === "story" ? "マンガ" : "一緒に整理すること");
 
     const id = document.createElement("span");
     id.className = "concern-card__id";
@@ -334,6 +362,19 @@
   });
 
     renderConcerns();
+
+    // カードはJSで描画するため、URLのハッシュ（#concern-1-3など）は描画後に自分で移動する
+    const hashId = decodeURIComponent(window.location.hash.slice(1));
+    if (hashId) {
+      const target = document.getElementById(hashId);
+      if (target) {
+        // focusはスクロール中に呼ぶと移動を打ち消すため、先にフォーカスしてから移動する
+        target.setAttribute("tabindex", "-1");
+        target.focus({ preventScroll: true });
+        // 通常の#リンクと同じく、到着時は即時移動にする
+        target.scrollIntoView({ behavior: "instant", block: "center" });
+      }
+    }
   }
 
   const concernTitles = {
@@ -342,7 +383,7 @@
     "1-3": "発信したいけれど日々の仕事で後回しになる",
     "1-4": "紹介や既存客に頼っていて新しいお客様へ届かない",
     "1-5": "集客方法が多すぎてどこに力を入れるべきか分からない",
-    "2-1": "領収書と請求書の整理が毎月ぎりぎりになる",
+    "2-1": "請求書の整理が毎月ぎりぎりになる",
     "2-2": "同じ内容を何度も別の表へ入力している",
     "2-3": "必要な情報がメール・チャット・紙に散らばっている",
     "2-4": "予約を手書きで管理していて抜けや重なりが怖い",
@@ -376,6 +417,15 @@
     contextualContactLink.href = contactUrl;
   }
 
+  // 送信先が設定されているかどうかで、各ページの説明文を切り替える。
+  // 設定前は「送信されません」という説明のままにして、実態とズレないようにする。
+  // お問い合わせページとプライバシーポリシーの両方で使う。
+  const endpointReady = /^https:\/\/script\.google\.com\/.+\/exec$/.test(CONTACT_ENDPOINT);
+  if (endpointReady) {
+    document.querySelectorAll("[data-endpoint-notice]").forEach((el) => (el.hidden = true));
+    document.querySelectorAll("[data-endpoint-active]").forEach((el) => (el.hidden = false));
+  }
+
   const contactForm = document.querySelector("[data-contact-form]");
   if (contactForm) {
     const categoryField = contactForm.elements.category;
@@ -383,7 +433,42 @@
     const concernOptions = [...concernField.querySelectorAll("option[data-category]")];
     const preview = document.querySelector("[data-form-preview]");
     const previewHeading = preview?.querySelector("h2");
+    const previewNote = preview?.querySelector("[data-preview-note]");
     const editButton = preview?.querySelector("[data-edit-form]");
+    const sendButton = preview?.querySelector("[data-send-form]");
+    const statusOutput = preview?.querySelector("[data-form-status]");
+    const complete = document.querySelector("[data-form-complete]");
+    const completeHeading = complete?.querySelector("h2");
+    const honeypotField = contactForm.elements.contact_reference;
+
+    if (endpointReady) {
+      if (previewNote) {
+        previewNote.textContent =
+          "この内容で送信します。直したいところがあれば「入力を修正する」から戻れます。";
+      }
+      if (sendButton) {
+        sendButton.disabled = false;
+        sendButton.textContent = "この内容で送信する";
+      }
+    }
+
+    // フォームを開いた時刻。表示から数秒未満で送信されたものは機械とみなす。
+    const openedAt = Date.now();
+    let sending = false;
+
+    const setStatus = (text) => {
+      if (statusOutput) statusOutput.textContent = text;
+    };
+
+    // 送信後の待ち時間。再読み込みされても効くようセッションに残す。
+    const remainingCooldownMs = () => {
+      try {
+        const lastSentAt = Number(sessionStorage.getItem("contactLastSentAt") || 0);
+        return Math.max(0, lastSentAt + CONTACT_COOLDOWN_MS - Date.now());
+      } catch (error) {
+        return 0; // 保存が使えない設定のブラウザでは、送信先側の連投制限に任せる
+      }
+    };
 
     const updateConcernOptions = (keepValue = true) => {
       const previousValue = keepValue ? concernField.value : "";
@@ -426,15 +511,98 @@
         if (output) output.textContent = value;
       });
 
+      setStatus("");
       preview.hidden = false;
       contactForm.hidden = true;
       previewHeading?.focus();
     });
 
     editButton?.addEventListener("click", () => {
+      setStatus("");
       preview.hidden = true;
       contactForm.hidden = false;
       contactForm.elements.name.focus();
+    });
+
+    sendButton?.addEventListener("click", async () => {
+      if (sending || !endpointReady) return;
+
+      const waitMs = remainingCooldownMs();
+      if (waitMs > 0) {
+        setStatus(
+          `続けて送信されないよう、あと${Math.ceil(waitMs / 1000)}秒お待ちください。入力内容はそのまま残っています。`
+        );
+        return;
+      }
+
+      sending = true;
+      sendButton.disabled = true;
+      if (editButton) editButton.disabled = true;
+      setStatus("送信しています。そのままお待ちください。");
+
+      const formData = new FormData(contactForm);
+      const payload = {
+        name: formData.get("name"),
+        company: formData.get("company"),
+        email: formData.get("email"),
+        category: formData.get("category"),
+        concern: formData.get("concern"),
+        message: formData.get("message"),
+        privacy_agreement: contactForm.elements.privacy_agreement.checked,
+        contact_reference: honeypotField ? honeypotField.value : "",
+        elapsed: Date.now() - openedAt,
+      };
+
+      try {
+        // Content-Type を text/plain にしているのは、application/json だと
+        // ブラウザが送信前に確認用リクエストを投げ、Apps Script が
+        // それに応答できず失敗するため。中身はJSON文字列のまま送る。
+        const response = await fetch(CONTACT_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload),
+        });
+        if (!response.ok) throw new Error(`送信先が応答を返しませんでした（${response.status}）。`);
+
+        let result;
+        try {
+          result = await response.json();
+        } catch (parseError) {
+          throw new Error("送信先からの応答を読み取れませんでした。");
+        }
+        if (!result?.ok) throw new Error(result?.error || "送信先で受け付けられませんでした。");
+
+        try {
+          sessionStorage.setItem("contactLastSentAt", String(Date.now()));
+        } catch (error) {
+          // 保存できなくても送信自体は完了しているので、そのまま進める
+        }
+
+        // 完了後に入力内容が画面へ残らないようにする
+        contactForm.reset();
+        updateConcernOptions(false);
+        preview.querySelectorAll("dd").forEach((cell) => (cell.textContent = ""));
+        setStatus("");
+
+        preview.hidden = true;
+        if (complete) {
+          complete.hidden = false;
+          completeHeading?.focus();
+        }
+      } catch (error) {
+        console.error(error);
+        // fetch が投げる TypeError は「そもそも通信できなかった」場合。
+        // 英語のまま出しても伝わらないので、日本語の説明に置き換える。
+        const detail = error instanceof TypeError
+          ? "ネットワークにつながっていない可能性があります。"
+          : error.message;
+        setStatus(
+          `送信できませんでした。${detail}通信環境をご確認のうえ、もう一度お試しください。入力内容は残っています。`
+        );
+        sending = false;
+        sendButton.disabled = false;
+        if (editButton) editButton.disabled = false;
+      }
     });
   }
 })();

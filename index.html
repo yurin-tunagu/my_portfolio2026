@@ -21,8 +21,8 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500&amp;family=Zen+Kaku+Gothic+New:wght@500;700&amp;display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="assets/css/styles.css" />
-    <script src="assets/js/site.js" defer></script>
+    <link rel="stylesheet" href="assets/css/styles.css?v=20260820-back-to-top" />
+    <script src="assets/js/site.js?v=20260820-back-to-top" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main-content">本文へ移動する</a>
@@ -47,7 +47,7 @@
 
         <nav class="site-nav" id="global-navigation" aria-label="サイト内ナビゲーション" data-site-nav>
           <a href="concerns/">困りごとを探す</a>
-          <a href="work/">実践と制作</a>
+          <a href="work/">実績と制作</a>
           <a class="site-nav__cta" href="contact/">相談する</a>
           <a class="site-nav__quiet" href="privacy/">プライバシー</a>
         </nav>
@@ -60,6 +60,7 @@
           <div class="hero__heading">
             <p class="eyebrow"><span aria-hidden="true"></span>つなぐスタジオ</p>
             <h1 id="hero-heading">想いを形にして<br />必要とする人へつなぐ</h1>
+            <p class="hero__subtext">あなたの想いが、届けたいお客様へまっすぐ届くように。</p>
           </div>
 
           <div class="hero__visual">
@@ -71,17 +72,16 @@
                 alt="ノートパソコンを持つつなぐスタジオのゆりん"
               />
             </div>
-            <svg class="hero__line" viewBox="0 0 280 96" aria-hidden="true">
-              <path d="M4 50c54-46 87 40 136-5s77 38 136-12" />
-            </svg>
           </div>
 
           <div class="hero__copy">
-            <p class="hero__identity">ゆりん｜つなぐスタジオ</p>
-            <p class="hero__role">AIをあなたの事業で使える仕組みに。<br /></p>
+            <p class="hero__identity">ゆりん</p>
             <p class="hero__lead">
-              困っていることを一緒に整理し今の仕事に合う形を考えます。<br />
-              最初から大きく作らず小さく試し人が確認しながら育てていきます。<br />
+              困っていることを一緒に整理し<br />
+              今の仕事に合う形を考えます。<br />
+              事業のお客様に満足していただくための<br />
+              AI活用ももちろんですが<br />
+              業務で実際に使う人が使いやすい形にすることも目指しています。<br />
             </p>
             <a class="button button--primary" href="#concern-entry">
               今の仕事で困っていることから探す
@@ -99,21 +99,35 @@
               <h2 id="concern-entry-heading">今の仕事で<br />困っていることから探す</h2>
             </div>
             <p class="section-heading__lead">
-              うまく言葉にできなくても大丈夫です。<br />近いと感じる場面から
-              似た困りごとや一緒に整理できることを見ていけます。<br />
+              うまく言葉にできなくても大丈夫です。<br />
+              気になるカテゴリーから具体的な困りごとや支援内容を確認できます。<br />
             </p>
           </div>
 
           <div class="category-grid">
             <article class="category-card category-card--marketing">
               <div class="category-card__icon" aria-hidden="true">
-                <svg viewBox="0 0 64 64"><path d="M12 14h31v36H12zM19 23h17M19 31h12M43 30h9v17l-4-4h-5z" /></svg>
+                <svg viewBox="0 0 64 64">
+                  <circle cx="23" cy="18" r="7" />
+                  <path d="M10 50c1-12 6-19 13-19 6 0 10 4 12 10M19 31l8 11 11-7" />
+                  <rect x="38" y="19" width="14" height="26" rx="2" />
+                  <path d="M43 23h4M44 40h2" />
+                </svg>
               </div>
               <p class="category-card__number">01</p>
               <h3>集客・発信</h3>
-              <p>何を出せば伝わるのか迷う。<br />発信が日々の仕事のあと回しになる。<br /></p>
-              <a class="text-link" href="concerns/?category=marketing">
-                集客・発信の困りごとを見る<span aria-hidden="true">→</span>
+              <ul class="category-card__voices">
+                <li>「発信したいけれど日々の仕事で後回しになる」</li>
+                <li>「発信しているのに仕事につながっている感じがしない」</li>
+                <li>「何を発信すればお客様に伝わるのか分からない」</li>
+              </ul>
+              <a
+                class="text-link category-card__link"
+                href="concerns/?category=marketing"
+                aria-label="集客・発信の詳しい内容を見る。マンガの解説もあります"
+              >
+                <span>詳しくはこちら <span aria-hidden="true">→</span></span>
+                <span class="category-card__link-note">マンガの解説もあるよ📖</span>
               </a>
             </article>
 
@@ -123,9 +137,18 @@
               </div>
               <p class="category-card__number">02</p>
               <h3>事務・情報整理</h3>
-              <p>探す・書き直す・確認することが重なり本業の時間が減っていく。<br /></p>
-              <a class="text-link" href="concerns/?category=operations">
-                事務・情報整理の困りごとを見る<span aria-hidden="true">→</span>
+              <ul class="category-card__voices">
+                <li>「請求書などの整理が毎月ギリギリになる」</li>
+                <li>「事務に追われて本来やりたい仕事が進まない」</li>
+                <li>「同じ内容を何度も別の表へ入力している」</li>
+              </ul>
+              <a
+                class="text-link category-card__link"
+                href="concerns/?category=operations"
+                aria-label="事務・情報整理の詳しい内容を見る。マンガの解説もあります"
+              >
+                <span>詳しくはこちら <span aria-hidden="true">→</span></span>
+                <span class="category-card__link-note">マンガの解説もあるよ📖</span>
               </a>
             </article>
 
@@ -135,9 +158,18 @@
               </div>
               <p class="category-card__number">03</p>
               <h3>お客様対応</h3>
-              <p>返信漏れや対応の差が不安。<br />同じ質問への対応で仕事が何度も止まる。<br /></p>
-              <a class="text-link" href="concerns/?category=customer">
-                お客様対応の困りごとを見る<span aria-hidden="true">→</span>
+              <ul class="category-card__voices">
+                <li>「同じ質問に毎日何度も答えている」</li>
+                <li>「メールやDMが複数の場所に届き返信漏れが怖い」</li>
+                <li>「クレームへの返し方に迷い返信が遅くなる」</li>
+              </ul>
+              <a
+                class="text-link category-card__link"
+                href="concerns/?category=customer"
+                aria-label="お客様対応の詳しい内容を見る。マンガの解説もあります"
+              >
+                <span>詳しくはこちら <span aria-hidden="true">→</span></span>
+                <span class="category-card__link-note">マンガの解説もあるよ📖</span>
               </a>
             </article>
           </div>
@@ -148,49 +180,19 @@
         </div>
       </section>
 
-      <section class="section process" aria-labelledby="process-heading">
-        <div class="container">
-          <div class="section-heading section-heading--narrow">
-            <p class="eyebrow"><span aria-hidden="true"></span>一緒に進める流れ</p>
-            <h2 id="process-heading">小さく試して<br />今の仕事に合う形へ。</h2>
-            <p class="section-heading__lead">
-              AIに任せきりにせず確認しながら進めます。<br />作って終わりではなく使いながら整えます。<br />
-            </p>
-          </div>
-
-          <ol class="process-list">
-            <li>
-              <span class="process-list__number">01</span>
-              <div><h3>整理する</h3><p>困る場面と本当に進めたい仕事を一緒に言葉にします。<br /></p></div>
-            </li>
-            <li>
-              <span class="process-list__number">02</span>
-              <div><h3>小さく試す</h3><p>負担やリスクを抑え確かめられる範囲から始めます。<br /></p></div>
-            </li>
-            <li>
-              <span class="process-list__number">03</span>
-              <div><h3>人が確認する</h3><p>大切な判断や公開・送信は人が確認できる形にします。<br /></p></div>
-            </li>
-            <li>
-              <span class="process-list__number">04</span>
-              <div><h3>改善する</h3><p>実際に使った感覚をもとに無理なく続く流れへ整えます。<br /></p></div>
-            </li>
-          </ol>
-        </div>
-      </section>
-
       <section class="section section--mint" id="work-intro" aria-labelledby="work-intro-heading">
         <div class="container split-intro">
           <div>
-            <p class="eyebrow"><span aria-hidden="true"></span>実践と制作</p>
-            <h2 id="work-intro-heading">できた数より<br />どこまで確かめたか。</h2>
+            <p class="eyebrow"><span aria-hidden="true"></span>実績と制作</p>
+            <h2 id="work-intro-heading">仕事や生活を支えるAIでの仕組み化</h2>
           </div>
           <div>
             <p class="split-intro__lead">
-              クライアントへ制作・納品したこと・自分の業務や暮らしで試していること
-              相談から一緒に検討できることを混同せずに紹介します。<br />
+              クライアント様・自身の仕事・プライベートでもAIを活用し、引き出しを増やすチャレンジを続けています。<br />
             </p>
-            <a class="text-link" href="work/">実践と制作の記録を見る<span aria-hidden="true">→</span></a>
+            <p style="margin-bottom: 1rem;"></p>
+            <a class="button button--secondary" href="work/#work-list">つくったものを覗いてみる👀</a>
+            <p style="margin-bottom: 1rem;"></p>
           </div>
         </div>
       </section>
@@ -203,10 +205,82 @@
           </div>
           <ol class="value-list">
             <li><span>01</span><div><h3>わかる言葉で進める</h3><p>専門用語に頼らず同じ目線で確認しながら進めます。<br /></p></div></li>
-            <li><span>02</span><div><h3>小さく確かめる</h3><p>いきなり大きく作らず試せる範囲から始めます。<br /></p></div></li>
-            <li><span>03</span><div><h3>人の判断を残す</h3><p>AIに任せきりにせず納得して確認・修正できる形を考えます。<br /></p></div></li>
+            <li>
+              <span>02</span>
+              <div>
+                <h3>無理なく続く形にする</h3>
+                <p>新しい負担をなるべく増やさず今の仕事の中で続けられる方法を試しながら育てます。<br /></p>
+              </div>
+            </li>
+            <li>
+              <span>03</span>
+              <div>
+                <h3>人が判断する場所を必ず残す</h3>
+                <p>
+                  AIは賢くても理想に近づくためのひとつの道具です。<br />
+                  あなたの仕事とお客様に合う方法を一番知っているのはあなたです。<br />
+                  良かった点も違和感も遠慮なく伝えてください。<br />
+                  その声をもとに一緒に改善していきます。<br />
+                </p>
+              </div>
+            </li>
           </ol>
-          <a class="text-link profile-intro__link" href="about/">ゆりんと進め方について見る<span aria-hidden="true">→</span></a>
+        </div>
+      </section>
+
+      <section class="section process process--five" aria-labelledby="process-heading">
+        <div class="container">
+          <div class="section-heading section-heading--narrow">
+            <p class="eyebrow"><span aria-hidden="true"></span>ご相談から導入まで</p>
+            <h2 id="process-heading">今の仕事に合う仕組みを<br />一緒につくる</h2>
+            <p class="section-heading__lead">
+              お問い合わせから実際に使える形になるまで。<br />
+              話して、試して、感想を聞きながら<br />
+              日々の仕事になじむ仕組みへ整えていきます。<br />
+            </p>
+          </div>
+
+          <ol class="process-list">
+            <li>
+              <span class="process-list__number">01</span>
+              <div>
+                <h3>まずはお話を聞かせてください</h3>
+                <p>フォームから今困っていることや「こうなったらいいな」と思うことを送ってください。<br />まだ整理できていなくても大丈夫です。<br /></p>
+              </div>
+            </li>
+            <li>
+              <span class="process-list__number">02</span>
+              <div>
+                <h3>困りごとと目指す姿を整理する</h3>
+                <p>個別にお話ししながら今の仕事の流れと変えたいことを一緒に整理します。<br /></p>
+              </div>
+            </li>
+            <li>
+              <span class="process-list__number">03</span>
+              <div>
+                <h3>まず使える形をつくる</h3>
+                <p>実際の仕事で使って確かめられるよう試作版をお渡しします。<br /></p>
+              </div>
+            </li>
+            <li>
+              <span class="process-list__number">04</span>
+              <div>
+                <h3>使いながら整える</h3>
+                <p>使ってみて感じたことを聞きながらより使いやすく満足できる形へ改善します。<br /></p>
+              </div>
+            </li>
+            <li>
+              <span class="process-list__number">05</span>
+              <div>
+                <h3>仕組みをお渡しする</h3>
+                <p>納得できる形になったら日々の仕事で使い続けられる仕組みとしてお渡しします。<br /></p>
+              </div>
+            </li>
+          </ol>
+
+          <p class="section-action">
+            <a class="text-link" href="about/">ゆりんについて見る<span aria-hidden="true">→</span></a>
+          </p>
         </div>
       </section>
 
@@ -223,8 +297,16 @@
               <p>はい。<br />うまくまとまっていなくても今どんな場面で止まっているかから一緒に整理します。<br /></p>
             </details>
             <details>
+              <summary>相談やお見積もりに費用はかかりますか？<span aria-hidden="true"></span></summary>
+              <p>初回のご相談は完全無料です。<br />お話をうかがったうえで、必要であればそのあとの進め方や費用感をご案内します。<br /></p>
+            </details>
+            <details>
               <summary>AIに詳しくないですが運用できますか？<span aria-hidden="true"></span></summary>
-              <p>今の仕事で無理なく使えることを優先し分かる言葉で確認しながら進めます。<br /></p>
+              <p>
+                大丈夫です。<br />
+                最終的にお渡しする形は1つではなく、話すだけで完結するものから、パソコン操作が必要なものまで様々です。<br />
+                今の仕事で無理なく使えることを優先し、お一人ずつに合った設計を目指します。<br />
+              </p>
             </details>
             <details>
               <summary>どんなことを相談できますか？<span aria-hidden="true"></span></summary>
@@ -235,8 +317,22 @@
               <p>相談内容を送ることは契約や導入を決めることではありません。<br />今の状況に合う次の一歩を考えるための入口です。<br /></p>
             </details>
             <details>
+              <summary>試してみてうまくいかなかったり、効果が出なかったらどうなりますか？<span aria-hidden="true"></span></summary>
+              <p>
+                最初から大きく作り込まず、小さく試せる範囲から始めます。<br />
+                合わないと感じた時点で立ち止まったり、方向を変えたりできます。<br />
+                うまくいかなかった場合も、その原因を一緒に振り返り、次の進め方を考え直します。<br />
+                無理に導入を続けることはありません。<br />
+              </p>
+            </details>
+            <details>
               <summary>従業員がAIに不安や抵抗を感じそうですが大丈夫ですか？<span aria-hidden="true"></span></summary>
-              <p>不安があることを前提にAIへ任せる範囲と人が確認する範囲を分け小さく確かめます。<br /></p>
+              <p>
+                ご心配は当然だと思います。新しいことを覚えるのは、それだけで負担になりますから。<br />
+                だからこそ、専門用語を使わず、その方のペースに合わせて進めます。<br />
+                わからないことは、その都度聞いていただいて構いません。<br />
+                従業員の皆様向けにAIの勉強会を開くこともできますので、あわせてご相談ください。<br />
+              </p>
             </details>
           </div>
         </div>
@@ -246,13 +342,17 @@
         <div class="container contact-intro__inner">
           <div>
             <p class="eyebrow eyebrow--light"><span aria-hidden="true"></span>次の一歩</p>
-            <h2 id="contact-intro-heading">まだ整理できていなくても<br />困っている場面から。</h2>
+            <h2 id="contact-intro-heading">話すことで頭が整理されることもあります</h2>
             <p>
-              相談内容を送るフォームとまず考え方や試行の過程を見るXのどちらからでも始められます。<br />
+              話すことで課題が明確になり、次の一歩が開ける<br />
+              そんな場所に使ってみてはいかがですか？<br />
+              <br />
+              「AIで何ができるの？」「AIってなんかこわい」<br />
+              その違和感を解くだけでも一歩先に進めます☺︎<br />
             </p>
           </div>
           <div class="contact-intro__actions">
-            <a class="button button--light" href="contact/">業務の困りごとを相談する</a>
+            <a class="button button--light" href="contact/">一歩踏み出す（相談）</a>
             <a
               class="button button--outline-light"
               href="https://x.com/Yurin275"
@@ -276,7 +376,7 @@
         </div>
         <nav class="site-footer__nav" aria-label="フッターナビゲーション">
           <a href="concerns/">困りごとを探す</a>
-          <a href="work/">実践と制作</a>
+          <a href="work/">実績と制作</a>
           <a href="about/">プロフィール</a>
           <a href="contact/">お問い合わせ</a>
           <a href="privacy/">プライバシー</a>
