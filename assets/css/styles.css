@@ -1060,6 +1060,17 @@ h3 {
   border-top: 3px solid var(--color-teal-700);
 }
 
+.concern-card__thumbnail {
+  aspect-ratio: 1150 / 490;
+  width: calc(100% + 3rem);
+  max-width: none;
+  margin: -1.5rem -1.5rem 1.25rem;
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
 .concern-card__meta {
   display: flex;
   gap: 0.75rem;
@@ -1379,6 +1390,10 @@ h3 {
   margin-bottom: 1.5rem;
   font-size: var(--text-body-lg);
   line-height: 1.85;
+}
+
+.contact-page__heading {
+  color: var(--color-orange-700);
 }
 
 .status-label {
@@ -1908,6 +1923,12 @@ h3 {
   color: var(--color-orange-700);
 }
 
+.profile-page__section-title {
+  color: var(--color-orange-700);
+  font-size: var(--text-h3);
+  font-weight: 700;
+}
+
 .profile-page__grid {
   display: grid;
   gap: 2rem;
@@ -1920,6 +1941,26 @@ h3 {
   padding: 1rem 1rem 0;
   border-radius: 50% 50% var(--radius-card) var(--radius-card);
   background: var(--color-mint-100);
+}
+
+.profile-timeline {
+  margin: 2rem 0 0;
+}
+
+.profile-timeline a {
+  display: block;
+}
+
+.profile-timeline img {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+}
+
+.profile-timeline a:focus-visible {
+  outline: 3px solid var(--color-orange-500);
+  outline-offset: 4px;
 }
 
 .background-card {

@@ -73,6 +73,17 @@
     desktopNavigation.addEventListener("change", () => setMenuState(false));
   }
 
+  // ヘッダーの控えめな導線は、プライバシーではなくプロフィールへ統一する。
+  document.querySelectorAll(".site-nav__quiet").forEach((link) => {
+    link.href = link.href.replace(/\/privacy\/?$/, "/about/");
+    link.textContent = "プロフィール";
+    if (new URL(link.href).pathname === window.location.pathname) {
+      link.setAttribute("aria-current", "page");
+    } else {
+      link.removeAttribute("aria-current");
+    }
+  });
+
   // TOPへ戻るボタン：一定スクロール量を超えたら表示する
   const backToTop = document.createElement("a");
   backToTop.href = "#";
@@ -122,10 +133,11 @@
       categoryId: "marketing",
       title: "何を発信すればお客様に伝わるのか分からない",
       empathy: "伝えたいことはあるのに写真や文章を前にすると手が止まってしまうときに。",
-      destinationType: "support",
-      destinationId: "marketing",
-      thumbnail: null,
-      status: "event-ready",
+      destinationType: "story",
+      destinationId: "what-to-post",
+      storyTitle: "写真の前で、手が止まる",
+      thumbnail: "what-to-post.jpg",
+      status: "story-confirmed",
     },
     {
       id: "1-3",
@@ -136,7 +148,7 @@
       destinationType: "story",
       destinationId: "mata-ashita",
       storyTitle: "閉店後の「また明日」",
-      thumbnail: null,
+      thumbnail: "mata-ashita.jpg",
       status: "story-confirmed",
     },
     {
@@ -170,7 +182,7 @@
       destinationType: "story",
       destinationId: "invoice",
       storyTitle: "毎月変わる あの請求書",
-      thumbnail: null,
+      thumbnail: "invoice.jpg",
       status: "story-confirmed",
     },
     {
@@ -212,10 +224,11 @@
       categoryId: "operations",
       title: "事務に追われて本来やりたい仕事が進まない",
       empathy: "忙しく働いたのに明日の準備や本業をまた後回しにしてしまうときに。",
-      destinationType: "support",
-      destinationId: "operations",
-      thumbnail: null,
-      status: "event-ready",
+      destinationType: "story",
+      destinationId: "admin-overload",
+      storyTitle: "明日の準備が、また明日になる",
+      thumbnail: "admin-overload.jpg",
+      status: "story-confirmed",
     },
     {
       id: "3-1",
@@ -232,12 +245,13 @@
       id: "3-2",
       slug: "many-inboxes",
       categoryId: "customer",
-      title: "メールやDMが複数の場所に届き返信漏れが怖い",
+      title: "メールやLINEが複数の場所に届き返信漏れが怖い",
       empathy: "通知が来るたびに画面を行き来し対応済みか分からなくなるときに。",
-      destinationType: "support",
-      destinationId: "customer-care",
-      thumbnail: null,
-      status: "event-ready",
+      destinationType: "story",
+      destinationId: "many-inboxes",
+      storyTitle: "通知が鳴る場所が、多すぎる",
+      thumbnail: "many-inboxes.jpg",
+      status: "story-confirmed",
     },
     {
       id: "3-3",
@@ -248,7 +262,7 @@
       destinationType: "story",
       destinationId: "mata-kono-shitsumon",
       storyTitle: "また この質問",
-      thumbnail: null,
+      thumbnail: "mata-kono-shitsumon.jpg",
       status: "story-confirmed",
     },
     {
@@ -310,6 +324,16 @@
     const article = document.createElement("article");
     article.className = `concern-card concern-card--${concern.destinationType}`;
     article.id = `concern-${concern.id}`;
+
+    if (concern.thumbnail) {
+      const thumb = document.createElement("img");
+      thumb.className = "concern-card__thumbnail";
+      thumb.src = `../assets/images/concerns/${concern.thumbnail}`;
+      thumb.alt = "";
+      thumb.loading = "lazy";
+      thumb.decoding = "async";
+      article.append(thumb);
+    }
 
     const meta = document.createElement("div");
     meta.className = "concern-card__meta";
@@ -419,7 +443,7 @@
     "2-4": "予約を手書きで管理していて抜けや重なりが怖い",
     "2-5": "事務に追われて本来やりたい仕事が進まない",
     "3-1": "前回の問い合わせや購入内容をすぐ確認できない",
-    "3-2": "メールやDMが複数の場所に届き返信漏れが怖い",
+    "3-2": "メールやLINEが複数の場所に届き返信漏れが怖い",
     "3-3": "同じ質問に毎日何度も答えている",
     "3-4": "人によって案内が違いお客様を迷わせてしまう",
     "3-5": "クレームへの返し方に迷い返信が遅くなる",
