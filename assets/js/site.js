@@ -36,6 +36,31 @@
     });
   });
 
+  // 各ページの大きな区切りだけを、下から静かに現す動き。
+  // マンガのコマや入力欄を一つずつ動かさないことで、読みやすさを保つ。
+  // ライブラリは追加せず、ブラウザ標準のIntersectionObserverを利用する。
+  const revealTargets = document.querySelectorAll("main > section:not(.hero), [data-reveal]");
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  if (revealTargets.length && !prefersReducedMotion.matches && "IntersectionObserver" in window) {
+    document.documentElement.classList.add("has-reveal-js");
+
+    const revealObserver = new IntersectionObserver(
+      (entries, observer) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-revealed");
+          observer.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.12 }
+    );
+
+    revealTargets.forEach((target) => {
+      target.classList.add("page-reveal");
+      revealObserver.observe(target);
+    });
+  }
+
   const menuButton = document.querySelector("[data-menu-button]");
   const siteNav = document.querySelector("[data-site-nav]");
   const menuLabel = document.querySelector("[data-menu-label]");
