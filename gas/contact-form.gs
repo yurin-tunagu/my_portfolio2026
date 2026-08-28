@@ -9,10 +9,10 @@
  * ------------------------------------------------------------------
  * 1. このファイルの内容を Apps Script のエディタへ貼り付けて保存する
  * 2. 左の歯車「プロジェクトの設定」→「スクリプト プロパティ」で次を追加する
- *      プロパティ : NOTIFY_EMAIL
- *      値         : 通知を受け取りたいメールアドレス
- *    （メールアドレスをコードに書かないのは、このファイルをGitHubへ
- *      上げても通知先が公開されないようにするため）
+ *      NOTIFY_EMAIL : 通知を受け取りたいメールアドレス
+ *      FORM_TOKEN   : 当サイトからの送信だと分かる合言葉。site.js の FORM_TOKEN と同じ値にする
+ *    （どちらもコードに書かないのは、このファイルをGitHubへ上げても
+ *      通知先や合言葉が公開されないようにするため）
  * 3. エディタ上部の関数選択で「setup」を選んで実行する
  *    → 記録用スプレッドシートが自動で作られ、そのURLが実行ログに出る
  *    → 初回はGoogleの許可画面が出るので許可する
@@ -40,6 +40,13 @@ var COOLDOWN_SECONDS = 60;
 
 /** 同じメールアドレスから1時間に受け付ける上限件数 */
 var HOURLY_LIMIT = 5;
+
+/** 送信者を問わず、1時間／1日に受け付ける上限件数（大量送信でメール枠を使い切られるのを防ぐ） */
+var GLOBAL_HOURLY_LIMIT = 30;
+var GLOBAL_DAILY_LIMIT = 80;
+
+/** 通知メールを送るのをやめて記録だけにする、1日の残り送信枠のしきい値 */
+var MAIL_QUOTA_RESERVE = 20;
 
 /** フォームを開いてから送信までに最低限必要なミリ秒（速すぎる＝機械とみなす） */
 var MIN_ELAPSED_MS = 3000;
@@ -88,6 +95,13 @@ function setup() {
     );
   }
 
+  if (!props.getProperty('FORM_TOKEN')) {
+    Logger.log(
+      '【注意】スクリプト プロパティ FORM_TOKEN が未設定です。合言葉チェックは無効のままです。' +
+      'site.js の FORM_TOKEN と同じ値を設定すると、無差別なbot送信を弾けます。'
+    );
+  }
+
   var sheet = getSheet_();
   var url = sheet.getParent().getUrl();
   Logger.log('記録用スプレッドシートの準備ができました:\n' + url);
@@ -106,6 +120,12 @@ function doPost(e) {
     var payload = parsePayload_(e);
     var data = validate_(payload);
 
+    // 当サイトの合言葉が無い／違うPOSTは、/exec を無差別に叩く機械とみなす。
+    // 判定条件を教えないよう、エラーは返さずブロックシートへ記録するだけにする。
+    if (!tokenOk_(payload)) {
+      data.blockedReason = data.blockedReason || '合言葉が一致しない';
+    }
+
     // 機械とみなしたものは、通知せずブロックシートへ記録するだけにする。
     // 送信側にはエラーを返さない（機械に判定条件を教えないため）。
     // 万一ふつうの利用者を巻き込んでも、内容はシートに残るので取り戻せる。
@@ -114,7 +134,7 @@ function doPost(e) {
       return jsonResponse_({ ok: true });
     }
 
-    var limited = checkRateLimit_(data.email);
+    var limited = checkRateLimit_(data.email) || checkGlobalLimit_();
     if (limited) {
       return jsonResponse_({ ok: false, error: limited });
     }
@@ -233,6 +253,42 @@ function checkRateLimit_(email) {
   return '';
 }
 
+/**
+ * 当サイトの合言葉が付いているか。
+ * FORM_TOKEN が未設定のときは、うっかり全ブロックしないよう素通りさせる（後方互換）。
+ */
+function tokenOk_(payload) {
+  var expected = PropertiesService.getScriptProperties().getProperty('FORM_TOKEN');
+  if (!expected) return true;
+  return text_(payload.form_token) === expected;
+}
+
+/**
+ * 送信者を問わない全体の受付上限。1通1通は別のメールアドレスでも、
+ * 全体で急増したら断る。加算の取りこぼしを防ぐためロックを取る。
+ */
+function checkGlobalLimit_() {
+  var lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(5000);
+  } catch (error) {
+    return ''; // ロックが取れないときは通す（正規利用者を止めない）
+  }
+  try {
+    var cache = CacheService.getScriptCache();
+    var hour = Number(cache.get('global_hour') || 0);
+    var day = Number(cache.get('global_day') || 0);
+    if (hour >= GLOBAL_HOURLY_LIMIT || day >= GLOBAL_DAILY_LIMIT) {
+      return 'ただいま多くのお問い合わせをいただいています。時間をおいてから、または直接メールでご連絡ください。';
+    }
+    cache.put('global_hour', String(hour + 1), 3600);
+    cache.put('global_day', String(day + 1), 86400);
+    return '';
+  } finally {
+    lock.releaseLock();
+  }
+}
+
 function getSpreadsheet_() {
   var props = PropertiesService.getScriptProperties();
   var id = props.getProperty('SPREADSHEET_ID');
@@ -323,6 +379,13 @@ function notify_(data) {
   var to = PropertiesService.getScriptProperties().getProperty('NOTIFY_EMAIL');
   if (!to) {
     console.warn('NOTIFY_EMAIL が未設定のため通知メールを送りませんでした。');
+    return;
+  }
+
+  // 大量送信でメール枠を使い切られても、記録は残るようにする。
+  // 残り枠が少ないときは通知メールを止めて、ログだけ残す。
+  if (MailApp.getRemainingDailyQuota() <= MAIL_QUOTA_RESERVE) {
+    console.warn('メール送信枠の残りが少ないため、通知メールを送りませんでした。記録シートを確認してください。');
     return;
   }
 

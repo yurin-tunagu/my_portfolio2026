@@ -6,6 +6,12 @@
   // 空のままなら送信ボタンは押せないままで、外部へは何も送られない。
   const CONTACT_ENDPOINT = "https://script.google.com/macros/s/AKfycbyutgvebXG9PZQwJrhAoTrAwyy8KkDTTBPIc-Vc26KiX8B6uR_zlbjRTCgOvmVCl5_XvA/exec";
 
+  // フォーム送信の合言葉。GAS側のスクリプトプロパティ FORM_TOKEN と同じ値にする。
+  // これはブラウザのJSに含まれるため「秘密」ではなく、/exec を無差別に叩く
+  // 一般的なbotを弾くためのもの（当サイト固有の値が無いPOSTを機械と判定する）。
+  // 本格的な迷惑送信が来たら Cloudflare Turnstile へ移行する（gas/README.md 参照）。
+  const FORM_TOKEN = "tng-2026-ebyoodl5i3ib12g0";
+
   // 同じ画面から続けて送信できるようになるまでの待ち時間（ミリ秒）
   const CONTACT_COOLDOWN_MS = 60000;
 
@@ -631,6 +637,7 @@
         privacy_agreement: contactForm.elements.privacy_agreement.checked,
         contact_reference: honeypotField ? honeypotField.value : "",
         elapsed: Date.now() - openedAt,
+        form_token: FORM_TOKEN,
       };
 
       try {
